@@ -1,0 +1,51 @@
+location_id,name,area,location_type,x_coord,y_coord
+L001,Balme Library,Volta Close,Library,5.6082,0.1825
+L002,Department of Computer Science,Central Campus,Academic,5.6103,0.1839
+L003,UG Legon Hospital,Legon Hall Precinct,Health,5.6704,0.1720
+L004,Commonwealth Hall,Commonwealth Close,Hostel,5.6723,0.1941
+L005,Volta Hall,Legon Hall Precinct,Hostel,5.6741,0.2027
+L006,Akuafo Hall,Commonwealth Close,Hostel,5.6186,0.1776
+L007,Legon Hall,Legon Interchange,Hostel,5.6621,0.2033
+L008,Mensah Sarbah Hall,Volta Close,Hostel,5.6223,0.1886
+L009,Jean Nelson Aggrey Hall,Legon Hall Precinct,Hostel,5.6764,0.1863
+L010,Elizabeth Sey Hall,North Campus,Hostel,5.6333,0.2158
+L011,Pentagon Hostel Block A,Volta Close,Hostel,5.6206,0.1934
+L012,Pentagon Hostel Block B,Central Campus,Hostel,5.6375,0.2219
+L013,Diaspora Hall,Legon Hall Precinct,Hostel,5.6466,0.1875
+L014,TF Hostel,Central Campus,Hostel,5.6779,0.1562
+L015,Bani Hostel,North Campus,Hostel,5.6268,0.2074
+L016,Valco Trust Hostel,Central Campus,Hostel,5.6548,0.2254
+L017,International Students Hostel,Central Campus,Hostel,5.6524,0.1621
+L018,Great Hall,South Campus,Admin,5.6091,0.2072
+L019,Central Cafeteria,Legon Hall Precinct,Dining,5.6554,0.1660
+L020,Night Market,Legon Hall Precinct,Market,5.6722,0.1916
+L021,N-Block Lecture Theatre,Central Campus,Academic,5.6214,0.1512
+L022,JQB School of Business,Commonwealth Close,Academic,5.6070,0.2236
+L023,Institute of African Studies,Commonwealth Close,Academic,5.6516,0.1994
+L024,School of Engineering Sciences,Central Campus,Academic,5.6751,0.2121
+L025,Department of Physics,Okponglo,Lab,5.6095,0.1896
+L026,Department of Chemistry,South Campus,Lab,5.6379,0.1738
+L027,Department of Mathematics,Central Campus,Academic,5.6483,0.1884
+L028,Department of Biochemistry,Volta Close,Lab,5.6715,0.1899
+L029,School of Law,Central Campus,Academic,5.6340,0.1867
+L030,Noguchi Memorial Institute for Medical Research,North Campus,Lab,5.6130,0.1823
+L031,UG Sports Stadium,Commonwealth Close,Sports,5.6616,0.1900
+L032,UG Basketball Court,Central Campus,Sports,5.6766,0.1887
+L033,Athletic Oval,North Campus,Sports,5.6406,0.1610
+L034,Registry Building,Okponglo,Admin,5.6206,0.1518
+L035,Central Administration Block,Volta Close,Admin,5.6597,0.1881
+L036,GCB Bank Legon Branch,Commonwealth Close,Bank,5.6048,0.1720
+L037,Ecobank Legon Branch,Commonwealth Close,Bank,5.6691,0.2189
+L038,Legon Hall Annex (Annie Jiagge),South Campus,Hostel,5.6539,0.1637
+L039,Volta Hall Annex,Okponglo,Hostel,5.6456,0.1732
+L040,Akuafo Hall Annex,Commonwealth Close,Hostel,5.6462,0.2163
+L041,Limann Hostel,Volta Close,Hostel,5.6305,0.1745
+L042,Jubilee Hall,Legon Hall Precinct,Hostel,5.6616,0.2236
+L043,Alexander Kwapong Hall,Legon Hall Precinct,Hostel,5.6794,0.1824
+L044,Jones Quartey Building,North Campus,Academic,5.6747,0.2135
+L045,Trust Towers Hostel,South Campus,Hostel,5.6314,0.1723
+L046,Main Gate Shuttle Stop,Central Campus,ShuttleStop,5.6612,0.1772
+L047,Okponglo Shuttle Stop,Legon Interchange,ShuttleStop,5.6268,0.2262
+L048,Legon Interchange Shuttle Stop,Legon Interchange,ShuttleStop,5.6247,0.1885
+L049,University Bookshop,South Campus,Market,5.6185,0.2100
+L050,Central Mosque,Legon Interchange,Religious,5.6115,0.1662
