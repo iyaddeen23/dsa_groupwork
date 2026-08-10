@@ -1,1 +1,18 @@
 PRD_Ghana_Smart_Service_Optimizer.md
+
+# Build artifacts
+target/
+*.class
+
+# Runtime SQLite database (regenerated from data/*.csv on first run)
+*.db
+*.db-journal
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
