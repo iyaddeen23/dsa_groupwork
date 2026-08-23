@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -55,13 +56,220 @@ public class SwingApp extends JFrame {
     static final Color TABLE_HEADER  = new Color(0x0A2647);
     static final Color TABLE_ROW_ALT = new Color(0x1C2D4A);
 
-    static final Font FONT_TITLE  = new Font("Segoe UI", Font.BOLD,  22);
+    static final Font FONT_TITLE  = new Font("Segoe UI", Font.BOLD,  20);
     static final Font FONT_HEADER = new Font("Segoe UI", Font.BOLD,  14);
     static final Font FONT_BODY   = new Font("Segoe UI", Font.PLAIN, 13);
     static final Font FONT_MONO   = new Font("Consolas", Font.PLAIN, 12);
     static final Font FONT_NAV    = new Font("Segoe UI", Font.BOLD,  13);
     static final Font FONT_SMALL  = new Font("Segoe UI", Font.PLAIN, 11);
     static final Font FONT_STAT   = new Font("Segoe UI", Font.BOLD,  18);
+
+    public enum IconType {
+        HOME, DATA, STRUCTURES, SEARCH, GRAPH, OPTIMISATION, AUDIT, PERFORMANCE,
+        GRADUATION_CAP, LOCATION, ROAD, RESOURCE, REQUEST, REFRESH, IMPORT, RUN, SORT, UNDO
+    }
+
+    public static class VectorIcon implements Icon {
+        private final IconType type;
+        private final int size;
+        private final Color colorOverride;
+
+        public VectorIcon(IconType type, int size) {
+            this(type, size, null);
+        }
+
+        public VectorIcon(IconType type, int size, Color colorOverride) {
+            this.type = type;
+            this.size = size;
+            this.colorOverride = colorOverride;
+        }
+
+        @Override public int getIconWidth() { return size; }
+        @Override public int getIconHeight() { return size; }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+            Color color = colorOverride;
+            if (color == null && c != null) {
+                color = c.getForeground();
+            }
+            if (color == null) color = ACCENT;
+            g2.setColor(color);
+            g2.translate(x, y);
+
+            float s = size;
+            float strokeWidth = Math.max(1.5f, s / 12f);
+            g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            switch (type) {
+                case HOME -> {
+                    Path2D path = new Path2D.Float();
+                    path.moveTo(s * 0.15f, s * 0.45f);
+                    path.lineTo(s * 0.5f,  s * 0.15f);
+                    path.lineTo(s * 0.85f, s * 0.45f);
+                    g2.draw(path);
+                    g2.draw(new Rectangle2D.Float(s * 0.25f, s * 0.45f, s * 0.5f, s * 0.4f));
+                    g2.fill(new Rectangle2D.Float(s * 0.42f, s * 0.62f, s * 0.16f, s * 0.23f));
+                }
+                case DATA -> {
+                    g2.draw(new Ellipse2D.Float(s * 0.15f, s * 0.12f, s * 0.7f, s * 0.22f));
+                    g2.draw(new Arc2D.Float(s * 0.15f, s * 0.35f, s * 0.7f, s * 0.22f, 180, 180, Arc2D.OPEN));
+                    g2.draw(new Arc2D.Float(s * 0.15f, s * 0.58f, s * 0.7f, s * 0.22f, 180, 180, Arc2D.OPEN));
+                    g2.draw(new Line2D.Float(s * 0.15f, s * 0.23f, s * 0.15f, s * 0.69f));
+                    g2.draw(new Line2D.Float(s * 0.85f, s * 0.23f, s * 0.85f, s * 0.69f));
+                }
+                case STRUCTURES -> {
+                    g2.fill(new RoundRectangle2D.Float(s * 0.15f, s * 0.15f, s * 0.7f, s * 0.2f, s * 0.08f, s * 0.08f));
+                    g2.fill(new RoundRectangle2D.Float(s * 0.15f, s * 0.40f, s * 0.7f, s * 0.2f, s * 0.08f, s * 0.08f));
+                    g2.fill(new RoundRectangle2D.Float(s * 0.15f, s * 0.65f, s * 0.7f, s * 0.2f, s * 0.08f, s * 0.08f));
+                }
+                case SEARCH -> {
+                    float r = s * 0.55f;
+                    g2.draw(new Ellipse2D.Float(s * 0.12f, s * 0.12f, r, r));
+                    g2.setStroke(new BasicStroke(strokeWidth * 1.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2.draw(new Line2D.Float(s * 0.52f, s * 0.52f, s * 0.85f, s * 0.85f));
+                }
+                case GRAPH -> {
+                    float r = s * 0.12f;
+                    float ax = s * 0.25f, ay = s * 0.3f;
+                    float bx = s * 0.75f, by = s * 0.35f;
+                    float cx = s * 0.45f, cy = s * 0.75f;
+                    g2.draw(new Line2D.Float(ax, ay, bx, by));
+                    g2.draw(new Line2D.Float(ax, ay, cx, cy));
+                    g2.draw(new Line2D.Float(bx, by, cx, cy));
+                    g2.fill(new Ellipse2D.Float(ax - r, ay - r, r * 2, r * 2));
+                    g2.fill(new Ellipse2D.Float(bx - r, by - r, r * 2, r * 2));
+                    g2.fill(new Ellipse2D.Float(cx - r, cy - r, r * 2, r * 2));
+                }
+                case OPTIMISATION -> {
+                    Path2D p = new Path2D.Float();
+                    p.moveTo(s * 0.55f, s * 0.1f);
+                    p.lineTo(s * 0.22f, s * 0.52f);
+                    p.lineTo(s * 0.48f, s * 0.52f);
+                    p.lineTo(s * 0.40f, s * 0.9f);
+                    p.lineTo(s * 0.78f, s * 0.45f);
+                    p.lineTo(s * 0.52f, s * 0.45f);
+                    p.closePath();
+                    g2.fill(p);
+                }
+                case AUDIT -> {
+                    g2.draw(new RoundRectangle2D.Float(s * 0.2f, s * 0.18f, s * 0.6f, s * 0.72f, s * 0.1f, s * 0.1f));
+                    g2.fill(new RoundRectangle2D.Float(s * 0.35f, s * 0.10f, s * 0.3f, s * 0.14f, s * 0.05f, s * 0.05f));
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.38f, s * 0.68f, s * 0.38f));
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.54f, s * 0.68f, s * 0.54f));
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.70f, s * 0.55f, s * 0.70f));
+                }
+                case PERFORMANCE -> {
+                    g2.fill(new Rectangle2D.Float(s * 0.15f, s * 0.55f, s * 0.18f, s * 0.35f));
+                    g2.fill(new Rectangle2D.Float(s * 0.41f, s * 0.35f, s * 0.18f, s * 0.55f));
+                    g2.fill(new Rectangle2D.Float(s * 0.67f, s * 0.15f, s * 0.18f, s * 0.75f));
+                    g2.draw(new Line2D.Float(s * 0.1f, s * 0.9f, s * 0.9f, s * 0.9f));
+                }
+                case GRADUATION_CAP -> {
+                    Path2D cap = new Path2D.Float();
+                    cap.moveTo(s * 0.5f,  s * 0.18f);
+                    cap.lineTo(s * 0.88f, s * 0.38f);
+                    cap.lineTo(s * 0.5f,  s * 0.58f);
+                    cap.lineTo(s * 0.12f, s * 0.38f);
+                    cap.closePath();
+                    g2.fill(cap);
+                    g2.draw(new Arc2D.Float(s * 0.28f, s * 0.45f, s * 0.44f, s * 0.32f, 180, 180, Arc2D.OPEN));
+                    g2.draw(new Line2D.Float(s * 0.85f, s * 0.4f, s * 0.85f, s * 0.75f));
+                    g2.fill(new Ellipse2D.Float(s * 0.81f, s * 0.72f, s * 0.08f, s * 0.15f));
+                }
+                case LOCATION -> {
+                    Path2D pin = new Path2D.Float();
+                    pin.moveTo(s * 0.5f, s * 0.88f);
+                    pin.curveTo(s * 0.2f, s * 0.55f, s * 0.18f, s * 0.38f, s * 0.5f, s * 0.15f);
+                    pin.curveTo(s * 0.82f, s * 0.38f, s * 0.8f, s * 0.55f, s * 0.5f, s * 0.88f);
+                    pin.closePath();
+                    g2.draw(pin);
+                    g2.fill(new Ellipse2D.Float(s * 0.4f, s * 0.32f, s * 0.2f, s * 0.2f));
+                }
+                case ROAD -> {
+                    g2.draw(new Line2D.Float(s * 0.25f, s * 0.15f, s * 0.12f, s * 0.85f));
+                    g2.draw(new Line2D.Float(s * 0.75f, s * 0.15f, s * 0.88f, s * 0.85f));
+                    g2.draw(new Line2D.Float(s * 0.5f,  s * 0.25f, s * 0.5f,  s * 0.42f));
+                    g2.draw(new Line2D.Float(s * 0.5f,  s * 0.58f, s * 0.5f,  s * 0.75f));
+                }
+                case RESOURCE -> {
+                    g2.draw(new RoundRectangle2D.Float(s * 0.15f, s * 0.35f, s * 0.7f, s * 0.38f, s * 0.1f, s * 0.1f));
+                    g2.draw(new Line2D.Float(s * 0.65f, s * 0.35f, s * 0.65f, s * 0.5f));
+                    g2.fill(new Ellipse2D.Float(s * 0.25f, s * 0.68f, s * 0.18f, s * 0.18f));
+                    g2.fill(new Ellipse2D.Float(s * 0.57f, s * 0.68f, s * 0.18f, s * 0.18f));
+                }
+                case REQUEST -> {
+                    Path2D doc = new Path2D.Float();
+                    doc.moveTo(s * 0.2f, s * 0.15f);
+                    doc.lineTo(s * 0.6f, s * 0.15f);
+                    doc.lineTo(s * 0.8f, s * 0.35f);
+                    doc.lineTo(s * 0.8f, s * 0.85f);
+                    doc.lineTo(s * 0.2f, s * 0.85f);
+                    doc.closePath();
+                    g2.draw(doc);
+                    g2.draw(new Line2D.Float(s * 0.6f, s * 0.15f, s * 0.6f, s * 0.35f));
+                    g2.draw(new Line2D.Float(s * 0.6f, s * 0.35f, s * 0.8f, s * 0.35f));
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.48f, s * 0.68f, s * 0.48f));
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.64f, s * 0.68f, s * 0.64f));
+                }
+                case REFRESH -> {
+                    g2.draw(new Arc2D.Float(s * 0.15f, s * 0.15f, s * 0.7f, s * 0.7f, 45, 270, Arc2D.OPEN));
+                    Path2D arr = new Path2D.Float();
+                    arr.moveTo(s * 0.62f, s * 0.05f);
+                    arr.lineTo(s * 0.85f, s * 0.22f);
+                    arr.lineTo(s * 0.62f, s * 0.35f);
+                    g2.fill(arr);
+                }
+                case IMPORT -> {
+                    g2.draw(new Arc2D.Float(s * 0.15f, s * 0.45f, s * 0.7f, s * 0.4f, 180, 180, Arc2D.OPEN));
+                    g2.draw(new Line2D.Float(s * 0.5f, s * 0.15f, s * 0.5f, s * 0.6f));
+                    Path2D arr = new Path2D.Float();
+                    arr.moveTo(s * 0.35f, s * 0.45f);
+                    arr.lineTo(s * 0.5f,  s * 0.65f);
+                    arr.lineTo(s * 0.65f, s * 0.45f);
+                    g2.fill(arr);
+                }
+                case RUN -> {
+                    Path2D play = new Path2D.Float();
+                    play.moveTo(s * 0.28f, s * 0.18f);
+                    play.lineTo(s * 0.82f, s * 0.5f);
+                    play.lineTo(s * 0.28f, s * 0.82f);
+                    play.closePath();
+                    g2.fill(play);
+                }
+                case SORT -> {
+                    Path2D up = new Path2D.Float();
+                    up.moveTo(s * 0.32f, s * 0.18f);
+                    up.lineTo(s * 0.18f, s * 0.42f);
+                    up.lineTo(s * 0.46f, s * 0.42f);
+                    up.closePath();
+                    g2.fill(up);
+                    g2.draw(new Line2D.Float(s * 0.32f, s * 0.4f, s * 0.32f, s * 0.82f));
+
+                    Path2D down = new Path2D.Float();
+                    down.moveTo(s * 0.68f, s * 0.82f);
+                    down.lineTo(s * 0.54f, s * 0.58f);
+                    down.lineTo(s * 0.82f, s * 0.58f);
+                    down.closePath();
+                    g2.fill(down);
+                    g2.draw(new Line2D.Float(s * 0.68f, s * 0.18f, s * 0.68f, s * 0.6f));
+                }
+                case UNDO -> {
+                    g2.draw(new Arc2D.Float(s * 0.15f, s * 0.25f, s * 0.7f, s * 0.6f, 0, 200, Arc2D.OPEN));
+                    Path2D arr = new Path2D.Float();
+                    arr.moveTo(s * 0.35f, s * 0.12f);
+                    arr.lineTo(s * 0.15f, s * 0.3f);
+                    arr.lineTo(s * 0.38f, s * 0.42f);
+                    g2.fill(arr);
+                }
+            }
+            g2.dispose();
+        }
+    }
 
     private final CampusDataStore store;
     private final AuditLog auditLog;
@@ -136,7 +344,9 @@ public class SwingApp extends JFrame {
         header.setBorder(new MatteBorder(0, 0, 2, 0, ACCENT));
         header.setPreferredSize(new Dimension(0, 64));
 
-        JLabel logo = new JLabel("  🎓  Ghana Smart Service Operations Optimizer");
+        JLabel logo = new JLabel("  Ghana Smart Service Operations Optimizer");
+        logo.setIcon(new VectorIcon(IconType.GRADUATION_CAP, 24, ACCENT));
+        logo.setIconTextGap(10);
         logo.setFont(FONT_TITLE);
         logo.setForeground(ACCENT);
         header.add(logo, BorderLayout.WEST);
@@ -149,15 +359,15 @@ public class SwingApp extends JFrame {
         return header;
     }
 
-    private static final String[][] NAV_ITEMS = {
-        {"🏠", "Home"},
-        {"🗄", "Data & DB"},
-        {"🧱", "Structures"},
-        {"🔍", "Search & Sort"},
-        {"🗺", "Graph Engine"},
-        {"⚡", "Optimisation"},
-        {"📋", "Audit Log"},
-        {"📊", "Performance"}
+    private static final Object[][] NAV_ITEMS = {
+        {IconType.HOME, "Home"},
+        {IconType.DATA, "Data & DB"},
+        {IconType.STRUCTURES, "Structures"},
+        {IconType.SEARCH, "Search & Sort"},
+        {IconType.GRAPH, "Graph Engine"},
+        {IconType.OPTIMISATION, "Optimisation"},
+        {IconType.AUDIT, "Audit Log"},
+        {IconType.PERFORMANCE, "Performance"}
     };
 
     private JPanel buildSidebar() {
@@ -171,7 +381,9 @@ public class SwingApp extends JFrame {
 
         for (int i = 0; i < NAV_ITEMS.length; i++) {
             final int idx = i;
-            JButton btn = buildNavButton(NAV_ITEMS[i][0], NAV_ITEMS[i][1], i == 0);
+            IconType iconType = (IconType) NAV_ITEMS[i][0];
+            String label = (String) NAV_ITEMS[i][1];
+            JButton btn = buildNavButton(iconType, label, i == 0);
             btn.addActionListener(e -> navigateTo(idx));
             navButtons.add(btn);
             sidebar.add(btn);
@@ -190,8 +402,8 @@ public class SwingApp extends JFrame {
         return sidebar;
     }
 
-    private JButton buildNavButton(String icon, String label, boolean active) {
-        JButton btn = new JButton(icon + "  " + label) {
+    private JButton buildNavButton(IconType iconType, String label, boolean active) {
+        JButton btn = new JButton(label) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -203,6 +415,8 @@ public class SwingApp extends JFrame {
                 g2.dispose();
             }
         };
+        btn.setIcon(new VectorIcon(iconType, 18, active ? ACCENT : TEXT_SECONDARY));
+        btn.setIconTextGap(12);
         btn.setFont(FONT_NAV);
         btn.setForeground(active ? ACCENT : TEXT_SECONDARY);
         btn.setBackground(active ? BG_CARD2 : BG_SIDEBAR);
@@ -221,10 +435,16 @@ public class SwingApp extends JFrame {
         btn.setOpaque(false);
         btn.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                if (btn.getForeground() != ACCENT) btn.setForeground(TEXT_PRIMARY);
+                if (btn.getForeground() != ACCENT) {
+                    btn.setForeground(TEXT_PRIMARY);
+                    btn.setIcon(new VectorIcon(iconType, 18, TEXT_PRIMARY));
+                }
             }
             public void mouseExited(MouseEvent e) {
-                if (btn.getForeground() != ACCENT) btn.setForeground(TEXT_SECONDARY);
+                if (btn.getForeground() != ACCENT) {
+                    btn.setForeground(TEXT_SECONDARY);
+                    btn.setIcon(new VectorIcon(iconType, 18, TEXT_SECONDARY));
+                }
             }
         });
         return btn;
@@ -232,11 +452,13 @@ public class SwingApp extends JFrame {
 
     private void navigateTo(int idx) {
         activeNavIndex = idx;
-        cardLayout.show(contentPanel, NAV_ITEMS[idx][1]);
+        cardLayout.show(contentPanel, (String) NAV_ITEMS[idx][1]);
         for (int i = 0; i < navButtons.size(); i++) {
             JButton b = navButtons.get(i);
             boolean active = (i == idx);
+            IconType iconType = (IconType) NAV_ITEMS[i][0];
             b.setForeground(active ? ACCENT : TEXT_SECONDARY);
+            b.setIcon(new VectorIcon(iconType, 18, active ? ACCENT : TEXT_SECONDARY));
             b.setBackground(active ? BG_CARD2 : BG_SIDEBAR);
             b.setBorder(active
                 ? new MatteBorder(0, 3, 0, 0, ACCENT)
@@ -249,14 +471,21 @@ public class SwingApp extends JFrame {
         contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(BG_DARK);
 
-        contentPanel.add(buildHomePanel(),         NAV_ITEMS[0][1]);
-        contentPanel.add(buildDataPanel(),         NAV_ITEMS[1][1]);
-        contentPanel.add(buildStructuresPanel(),   NAV_ITEMS[2][1]);
-        contentPanel.add(buildSearchSortPanel(),   NAV_ITEMS[3][1]);
-        contentPanel.add(buildGraphPanel(),        NAV_ITEMS[4][1]);
-        contentPanel.add(buildOptimisationPanel(), NAV_ITEMS[5][1]);
-        contentPanel.add(buildAuditPanel(),        NAV_ITEMS[6][1]);
-        contentPanel.add(buildPerformancePanel(),  NAV_ITEMS[7][1]);
+        for (int i = 0; i < NAV_ITEMS.length; i++) {
+            String name = (String) NAV_ITEMS[i][1];
+            JPanel p = switch (i) {
+                case 0 -> buildHomePanel();
+                case 1 -> buildDataPanel();
+                case 2 -> buildStructuresPanel();
+                case 3 -> buildSearchSortPanel();
+                case 4 -> buildGraphPanel();
+                case 5 -> buildOptimisationPanel();
+                case 6 -> buildAuditPanel();
+                case 7 -> buildPerformancePanel();
+                default -> new JPanel();
+            };
+            contentPanel.add(p, name);
+        }
 
         return contentPanel;
     }
@@ -283,7 +512,7 @@ public class SwingApp extends JFrame {
     void updateStatus() {
         if (statusLabel != null) {
             statusLabel.setText(String.format(
-                "  ✅  %d locations  •  %d roads  •  %d resources  •  %d requests",
+                "  [OK] %d locations  |  %d roads  |  %d resources  |  %d requests",
                 store.locations().size(), store.roads().size(),
                 store.resources().size(), store.requests().size()
             ));
@@ -297,10 +526,10 @@ public class SwingApp extends JFrame {
 
         JPanel banner = new JPanel(new GridLayout(1, 4, 16, 0));
         banner.setBackground(BG_DARK);
-        banner.add(statCard("📍 Locations", () -> String.valueOf(store.locations().size()), TEXT_INFO));
-        banner.add(statCard("🛣  Roads",     () -> String.valueOf(store.roads().size()),    ACCENT));
-        banner.add(statCard("🚐 Resources",  () -> String.valueOf(store.resources().size()), TEXT_SUCCESS));
-        banner.add(statCard("📋 Requests",   () -> String.valueOf(store.requests().size()), new Color(0xBE4BDB)));
+        banner.add(statCard("Locations", IconType.LOCATION, () -> String.valueOf(store.locations().size()), TEXT_INFO));
+        banner.add(statCard("Roads",     IconType.ROAD,     () -> String.valueOf(store.roads().size()),    ACCENT));
+        banner.add(statCard("Resources",  IconType.RESOURCE, () -> String.valueOf(store.resources().size()), TEXT_SUCCESS));
+        banner.add(statCard("Requests",   IconType.REQUEST,  () -> String.valueOf(store.requests().size()), new Color(0xBE4BDB)));
         panel.add(banner, BorderLayout.NORTH);
 
         JPanel centre = new JPanel(new GridLayout(2, 1, 0, 20));
@@ -313,10 +542,10 @@ public class SwingApp extends JFrame {
             "This system loads the University of Ghana, Legon campus data (locations, roads,\n" +
             "service requests, resources) into 13 custom-built data structures and runs search,\n" +
             "sort, graph, greedy and dynamic-programming algorithms over them:\n\n" +
-            "  • Dispatch scheduling        • Shortest routes (Dijkstra)\n" +
-            "  • Minimum-cost networks      • Budget-constrained request selection\n" +
-            "  • Priority-based assignment  • Audit / Undo log\n" +
-            "  • Comparative sorting        • Timed performance experiments\n\n" +
+            "  * Dispatch scheduling        * Shortest routes (Dijkstra)\n" +
+            "  * Minimum-cost networks      * Budget-constrained request selection\n" +
+            "  * Priority-based assignment  * Audit / Undo log\n" +
+            "  * Comparative sorting        * Timed performance experiments\n\n" +
             "Navigate using the sidebar to explore each module."
         );
         desc.setFont(FONT_BODY);
@@ -335,7 +564,7 @@ public class SwingApp extends JFrame {
             "Hash Table", "Hash Set", "Disjoint Set", "Graph (Adj List)", "Graph (Adj Matrix)"
         };
         for (String s : structures) {
-            JLabel lbl = new JLabel("✦ " + s);
+            JLabel lbl = new JLabel("* " + s);
             lbl.setFont(FONT_SMALL);
             lbl.setForeground(TEXT_INFO);
             lbl.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
@@ -347,7 +576,7 @@ public class SwingApp extends JFrame {
         return panel;
     }
 
-    private JPanel statCard(String title, java.util.function.Supplier<String> valueSupplier, Color color) {
+    private JPanel statCard(String title, IconType iconType, java.util.function.Supplier<String> valueSupplier, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(BG_CARD);
         card.setBorder(new CompoundBorder(
@@ -356,6 +585,8 @@ public class SwingApp extends JFrame {
         ));
 
         JLabel titleLbl = new JLabel(title);
+        titleLbl.setIcon(new VectorIcon(iconType, 18, color));
+        titleLbl.setIconTextGap(8);
         titleLbl.setFont(FONT_BODY);
         titleLbl.setForeground(TEXT_SECONDARY);
 
@@ -369,20 +600,20 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildDataPanel() {
-        JPanel panel = makeModulePanel("🗄  Data & Database");
+        JPanel panel = makeModulePanel("Data & Database");
 
         JTextArea out = makeOutputArea();
         JPanel controls = makeControlsCard("Operations");
         controls.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 8));
 
-        JButton reloadBtn   = makeAccentButton("↺  Reload from Database");
-        JButton reimportBtn = makeSecondaryButton("📥  Re-import Seed CSVs");
+        JButton reloadBtn   = makeAccentButton("Reload from Database", IconType.REFRESH);
+        JButton reimportBtn = makeSecondaryButton("Re-import Seed CSVs", IconType.IMPORT);
 
         reloadBtn.addActionListener(e -> runAsync(out, () -> {
             appendLine(out, "[ Reloading structures from database... ]", ACCENT);
             store.loadFromDatabase();
             updateStatus();
-            appendLine(out, String.format("✅  Reloaded: %d locations, %d roads, %d resources, %d requests.",
+            appendLine(out, String.format("[OK] Reloaded: %d locations, %d roads, %d resources, %d requests.",
                 store.locations().size(), store.roads().size(),
                 store.resources().size(), store.requests().size()), TEXT_SUCCESS);
         }));
@@ -394,7 +625,7 @@ public class SwingApp extends JFrame {
             appendLine(out, report, TEXT_INFO);
             store.loadFromDatabase();
             updateStatus();
-            appendLine(out, "✅  Import complete. Structures reloaded.", TEXT_SUCCESS);
+            appendLine(out, "[OK] Import complete. Structures reloaded.", TEXT_SUCCESS);
         }));
 
         controls.add(reloadBtn);
@@ -405,7 +636,7 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildStructuresPanel() {
-        JPanel panel = makeModulePanel("🧱  Data Structures Demo");
+        JPanel panel = makeModulePanel("Data Structures Demo");
         JTextArea out = makeOutputArea();
         JPanel controls = makeControlsCard("Operations");
         controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
@@ -429,7 +660,7 @@ public class SwingApp extends JFrame {
         idLabel.setForeground(TEXT_SECONDARY);
         JTextField idField = makeTextField("e.g. L001, V001, Q001", 16);
 
-        JButton runBtn = makeAccentButton("▶  Run");
+        JButton runBtn = makeAccentButton("Run", IconType.RUN);
         runBtn.addActionListener(e -> {
             int sel = opCombo.getSelectedIndex() + 1;
             String input = idField.getText().trim();
@@ -465,12 +696,12 @@ public class SwingApp extends JFrame {
             case 1 -> {
                 appendLine(out, "[ Hash Table: Location by ID = " + input + " ]", ACCENT);
                 Location loc = store.locationById().get(input);
-                appendLine(out, loc != null ? "✅  " + loc : "❌  Not found.", loc != null ? TEXT_SUCCESS : TEXT_ERROR);
+                appendLine(out, loc != null ? "[OK] " + loc : "[ERROR] Not found.", loc != null ? TEXT_SUCCESS : TEXT_ERROR);
             }
             case 2 -> {
                 appendLine(out, "[ AVL Tree: Location by name = " + input + " ]", ACCENT);
                 Location loc = store.locationByName().search(input);
-                appendLine(out, loc != null ? "✅  " + loc : "❌  Not found.", loc != null ? TEXT_SUCCESS : TEXT_ERROR);
+                appendLine(out, loc != null ? "[OK] " + loc : "[ERROR] Not found.", loc != null ? TEXT_SUCCESS : TEXT_ERROR);
                 appendLine(out, String.format("   AVL height: %d  (n=%d, theoretical min ~%d)",
                     store.locationByName().height(), store.locationByName().size(),
                     (int) Math.ceil(Math.log(store.locationByName().size() + 1) / Math.log(2))), TEXT_INFO);
@@ -478,14 +709,14 @@ public class SwingApp extends JFrame {
             case 3 -> {
                 appendLine(out, "[ B-Tree: Resource by ID = " + input + " ]", ACCENT);
                 Resource r = store.resourceIndex().search(input);
-                appendLine(out, r != null ? "✅  " + r : "❌  Not found.", r != null ? TEXT_SUCCESS : TEXT_ERROR);
+                appendLine(out, r != null ? "[OK] " + r : "[ERROR] Not found.", r != null ? TEXT_SUCCESS : TEXT_ERROR);
                 appendLine(out, "   B-tree height (pages): " + store.resourceIndex().height(), TEXT_INFO);
             }
             case 4 -> {
                 appendLine(out, "[ BST: ServiceRequest by ID = " + input + " ]", ACCENT);
                 ServiceRequest r = store.requestByIdBst().search(input);
-                appendLine(out, r != null ? "✅  " + r : "❌  Not found.", r != null ? TEXT_SUCCESS : TEXT_ERROR);
-                appendLine(out, String.format("   BST height: %d  (n=%d) — unbalanced",
+                appendLine(out, r != null ? "[OK] " + r : "[ERROR] Not found.", r != null ? TEXT_SUCCESS : TEXT_ERROR);
+                appendLine(out, String.format("   BST height: %d  (n=%d) - unbalanced",
                     store.requestByIdBst().height(), store.requestByIdBst().size()), TEXT_INFO);
             }
             case 5 -> {
@@ -513,10 +744,10 @@ public class SwingApp extends JFrame {
                     if (shown++ >= 6) break;
                     if (r.getUrgency() >= 4) {
                         deque.addFront(r);
-                        appendLine(out, "  URGENT → addFront: " + r.getRequestId() + " (urgency=" + r.getUrgency() + ")", new Color(0xEF9A9A));
+                        appendLine(out, "  URGENT -> addFront: " + r.getRequestId() + " (urgency=" + r.getUrgency() + ")", new Color(0xEF9A9A));
                     } else {
                         deque.addRear(r);
-                        appendLine(out, "  normal → addRear:  " + r.getRequestId() + " (urgency=" + r.getUrgency() + ")", TEXT_SECONDARY);
+                        appendLine(out, "  normal -> addRear:  " + r.getRequestId() + " (urgency=" + r.getUrgency() + ")", TEXT_SECONDARY);
                     }
                 }
                 appendLine(out, "Front (urgent-first): " + deque.peekFront(), TEXT_SUCCESS);
@@ -534,16 +765,16 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildSearchSortPanel() {
-        JPanel panel = makeModulePanel("🔍  Search & Sort Lab");
+        JPanel panel = makeModulePanel("Search & Sort Lab");
         JTextArea out = makeOutputArea();
 
         JPanel topRow = makeControlsCard("Search: Linear vs Binary");
         topRow.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 8));
         JTextField searchField = makeTextField("location name to search", 22);
-        JButton searchBtn = makeAccentButton("🔍  Run Comparison");
+        JButton searchBtn = makeAccentButton("Run Comparison", IconType.SEARCH);
         searchBtn.addActionListener(e -> {
             String target = searchField.getText().trim();
-            if (target.isEmpty()) { appendLine(out, "⚠  Please enter a name.", TEXT_ERROR); return; }
+            if (target.isEmpty()) { appendLine(out, "[WARN] Please enter a name.", TEXT_ERROR); return; }
             runAsync(out, () -> {
                 appendLine(out, "[ Linear vs Binary Search: \"" + target + "\" ]", ACCENT);
                 String[] names = namesOf();
@@ -555,8 +786,8 @@ public class SwingApp extends JFrame {
                 long t2 = System.nanoTime();
                 int bi = BinarySearch.search(sorted, target, Comparator.naturalOrder());
                 long t3 = System.nanoTime();
-                appendLine(out, String.format("  Linear search:  index=%-4d  time=%.3f µs", li, (t1-t0)/1000.0), TEXT_INFO);
-                appendLine(out, String.format("  Binary search:  index=%-4d  time=%.3f µs  (on pre-sorted array)", bi, (t3-t2)/1000.0), TEXT_SUCCESS);
+                appendLine(out, String.format("  Linear search:  index=%-4d  time=%.3f us", li, (t1-t0)/1000.0), TEXT_INFO);
+                appendLine(out, String.format("  Binary search:  index=%-4d  time=%.3f us  (on pre-sorted array)", bi, (t3-t2)/1000.0), TEXT_SUCCESS);
                 if (li >= 0) appendLine(out, "  Found: " + names[li], TEXT_PRIMARY);
                 else appendLine(out, "  Not found in location names.", TEXT_ERROR);
             });
@@ -569,12 +800,12 @@ public class SwingApp extends JFrame {
         botRow.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 8));
         String[] algNames = {"Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort"};
         JComboBox<String> algCombo = makeComboBox(algNames);
-        JButton sortBtn = makeAccentButton("⬇  Sort Now");
+        JButton sortBtn = makeAccentButton("Sort Now", IconType.SORT);
         sortBtn.addActionListener(e -> {
             int alg = algCombo.getSelectedIndex() + 1;
             runAsync(out, () -> runSort(out, alg, algNames[alg-1]));
         });
-        JButton allBtn = makeSecondaryButton("⬇⬇  Run All Sorts");
+        JButton allBtn = makeSecondaryButton("Run All Sorts", IconType.SORT);
         allBtn.addActionListener(e -> runAsync(out, () -> {
             for (int i = 0; i < 4; i++) runSort(out, i+1, algNames[i]);
         }));
@@ -603,7 +834,7 @@ public class SwingApp extends JFrame {
             case 4 -> QuickSort.sort(arr, cmp);
         }
         long t1 = System.nanoTime();
-        appendLine(out, String.format("  ✅  Sorted %d requests in %.3f ms.", arr.length, (t1-t0)/1_000_000.0), TEXT_SUCCESS);
+        appendLine(out, String.format("  [OK] Sorted %d requests in %.3f ms.", arr.length, (t1-t0)/1_000_000.0), TEXT_SUCCESS);
         appendLine(out, "  Top 5 by urgency:", TEXT_INFO);
         for (int i = 0; i < 5 && i < arr.length; i++) {
             appendLine(out, String.format("    #%d  %s  urgency=%d  %s", i+1, arr[i].getRequestId(), arr[i].getUrgency(), arr[i].getCategory()), TEXT_PRIMARY);
@@ -617,7 +848,7 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildGraphPanel() {
-        JPanel panel = makeModulePanel("🗺  Graph Engine");
+        JPanel panel = makeModulePanel("Graph Engine");
         JTextArea out = makeOutputArea();
         JPanel controls = makeControlsCard("Graph Algorithm Controls");
         controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
@@ -634,11 +865,11 @@ public class SwingApp extends JFrame {
         fieldRow.add(dstLabel); fieldRow.add(dstField);
 
         JPanel btnRow = makePaddedRow();
-        JButton bfsBtn     = makeAccentButton("BFS");
-        JButton dfsBtn     = makeAccentButton("DFS");
-        JButton dijBtn     = makeAccentButton("Dijkstra");
-        JButton primBtn    = makeSecondaryButton("Prim MST");
-        JButton kruskalBtn = makeSecondaryButton("Kruskal MST");
+        JButton bfsBtn     = makeAccentButton("BFS", IconType.GRAPH);
+        JButton dfsBtn     = makeAccentButton("DFS", IconType.GRAPH);
+        JButton dijBtn     = makeAccentButton("Dijkstra", IconType.GRAPH);
+        JButton primBtn    = makeSecondaryButton("Prim MST", IconType.STRUCTURES);
+        JButton kruskalBtn = makeSecondaryButton("Kruskal MST", IconType.STRUCTURES);
 
         bfsBtn.addActionListener(e -> runAsync(out, () -> {
             String src = srcField.getText().trim();
@@ -654,12 +885,12 @@ public class SwingApp extends JFrame {
         }));
         dijBtn.addActionListener(e -> runAsync(out, () -> {
             String src = srcField.getText().trim(), dst = dstField.getText().trim();
-            appendLine(out, "[ Dijkstra: " + src + " → " + dst + " ]", ACCENT);
+            appendLine(out, "[ Dijkstra: " + src + " -> " + dst + " ]", ACCENT);
             Dijkstra.Result<String> res = Dijkstra.run(store.roadNetwork(), src);
             Double dist = res.distances.get(dst);
-            if (dist == null) appendLine(out, "❌  No path found.", TEXT_ERROR);
+            if (dist == null) appendLine(out, "[ERROR] No path found.", TEXT_ERROR);
             else {
-                appendLine(out, String.format("✅  Shortest cost: %.3f", dist), TEXT_SUCCESS);
+                appendLine(out, String.format("[OK] Shortest cost: %.3f", dist), TEXT_SUCCESS);
                 appendLine(out, "   Path: " + res.pathTo(dst), TEXT_INFO);
             }
         }));
@@ -696,17 +927,17 @@ public class SwingApp extends JFrame {
             if (shown++ < 20) appendLine(out, "  " + edge, TEXT_PRIMARY);
         }
         if (result.edges.size() > 20) appendLine(out, "  ... (" + (result.edges.size()-20) + " more)", TEXT_SECONDARY);
-        appendLine(out, String.format("✅  Total network cost: %.3f", result.totalCost), TEXT_SUCCESS);
+        appendLine(out, String.format("[OK] Total network cost: %.3f", result.totalCost), TEXT_SUCCESS);
     }
 
     private JPanel buildOptimisationPanel() {
-        JPanel panel = makeModulePanel("⚡  Optimisation Engine");
+        JPanel panel = makeModulePanel("Optimisation Engine");
         JTextArea out = makeOutputArea();
         JPanel controls = makeControlsCard("Operations");
         controls.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 8));
 
-        JButton greedyBtn   = makeAccentButton("🎯  Greedy Resource Assignment");
-        JButton knapsackBtn = makeSecondaryButton("⚖  Greedy vs DP Knapsack");
+        JButton greedyBtn   = makeAccentButton("Greedy Resource Assignment", IconType.OPTIMISATION);
+        JButton knapsackBtn = makeSecondaryButton("Greedy vs DP Knapsack", IconType.DATA);
 
         greedyBtn.addActionListener(e -> runAsync(out, () -> {
             appendLine(out, "[ Greedy Priority-Based Resource Assignment ]", ACCENT);
@@ -720,7 +951,7 @@ public class SwingApp extends JFrame {
             appendLine(out, String.format("  Pending NEW requests: %d   |   Available resources: %d", pending.size(), available.size()), TEXT_INFO);
             GreedyResourceAssignment.Result result = GreedyResourceAssignment.assign(pending, available, store.demoReferenceTime());
 
-            appendLine(out, String.format("✅  Assigned %d / %d requests. Unassigned: %d",
+            appendLine(out, String.format("[OK] Assigned %d / %d requests. Unassigned: %d",
                 result.assigned().size(), pending.size(), result.unassigned().size()), TEXT_SUCCESS);
 
             int show = Math.min(10, result.assigned().size());
@@ -730,7 +961,7 @@ public class SwingApp extends JFrame {
                 auditLog.record("ASSIGN_RESOURCE", "resources", a.resource().getResourceId(), "AVAILABLE", "BUSY");
                 store.serviceRequestDao().updateStatus(a.request().getRequestId(), RequestStatus.ASSIGNED);
                 auditLog.record("ASSIGN_REQUEST", "service_requests", a.request().getRequestId(), "NEW", "ASSIGNED");
-                appendLine(out, String.format("  %s → %s", a.request().getRequestId(), a.resource().getResourceId()), TEXT_PRIMARY);
+                appendLine(out, String.format("  %s -> %s", a.request().getRequestId(), a.resource().getResourceId()), TEXT_PRIMARY);
             }
             if (result.assigned().size() > show)
                 appendLine(out, "  ... (" + (result.assigned().size()-show) + " more assignments)", TEXT_SECONDARY);
@@ -738,7 +969,7 @@ public class SwingApp extends JFrame {
             if (!result.assigned().isEmpty()) {
                 store.loadFromDatabase();
                 updateStatus();
-                appendLine(out, "(" + result.assigned().size()*2 + " audit events recorded — check Audit Log panel)", TEXT_INFO);
+                appendLine(out, "(" + result.assigned().size()*2 + " audit events recorded - check Audit Log panel)", TEXT_INFO);
             }
         }));
 
@@ -751,8 +982,8 @@ public class SwingApp extends JFrame {
             appendLine(out, "Items: A(w=10, v=60)  B(w=20, v=100)  C(w=30, v=120)   Capacity=" + cap, TEXT_INFO);
             appendLine(out, "Greedy (by value/weight ratio) picks: " + greedy.selected() + "  total value=" + greedy.totalValue(), new Color(0xFFB74D));
             appendLine(out, "DP (0/1 optimal) picks:               " + dp.selected()     + "  total value=" + dp.totalValue(),     TEXT_SUCCESS);
-            appendLine(out, "⚠  Greedy is SUBOPTIMAL here by " + (dp.totalValue()-greedy.totalValue()) + " value points.", TEXT_ERROR);
-            appendLine(out, "   → This is the required counterexample proving Greedy ≠ Optimal for 0/1 Knapsack.", TEXT_SECONDARY);
+            appendLine(out, "[WARN] Greedy is SUBOPTIMAL here by " + (dp.totalValue()-greedy.totalValue()) + " value points.", TEXT_ERROR);
+            appendLine(out, "   -> This is the required counterexample proving Greedy != Optimal for 0/1 Knapsack.", TEXT_SECONDARY);
         }));
 
         controls.add(greedyBtn);
@@ -763,7 +994,7 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildAuditPanel() {
-        JPanel panel = makeModulePanel("📋  Audit / Undo Log");
+        JPanel panel = makeModulePanel("Audit / Undo Log");
 
         String[] cols = {"#", "Event Type", "Table", "Entity ID", "Before", "After", "Created At"};
         DefaultTableModel tableModel = new DefaultTableModel(cols, 0) {
@@ -779,8 +1010,8 @@ public class SwingApp extends JFrame {
         JPanel controls = makeControlsCard("Undo Log Controls");
         controls.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 8));
 
-        JButton refreshBtn = makeAccentButton("↺  Refresh Log");
-        JButton undoBtn    = makeSecondaryButton("↩  Undo Last Action");
+        JButton refreshBtn = makeAccentButton("Refresh Log", IconType.REFRESH);
+        JButton undoBtn    = makeSecondaryButton("Undo Last Action", IconType.UNDO);
         JLabel stackSize   = new JLabel("Stack: 0");
         stackSize.setFont(FONT_BODY);
         stackSize.setForeground(TEXT_INFO);
@@ -806,18 +1037,18 @@ public class SwingApp extends JFrame {
         refreshBtn.addActionListener(e -> {
             appendLine(out, "[ Refreshing audit log... ]", ACCENT);
             refresh.run();
-            appendLine(out, "✅  Loaded " + tableModel.getRowCount() + " events.", TEXT_SUCCESS);
+            appendLine(out, "[OK] Loaded " + tableModel.getRowCount() + " events.", TEXT_SUCCESS);
         });
 
         undoBtn.addActionListener(e -> runAsync(out, () -> {
             if (!auditLog.canUndo()) {
-                appendLine(out, "❌  Nothing to undo.", TEXT_ERROR);
+                appendLine(out, "[ERROR] Nothing to undo.", TEXT_ERROR);
             } else {
                 var undone = auditLog.undoLast();
                 revertEntityState(undone);
                 store.loadFromDatabase();
                 updateStatus();
-                appendLine(out, "✅  Undid: " + undone, TEXT_SUCCESS);
+                appendLine(out, "[OK] Undid: " + undone, TEXT_SUCCESS);
                 refresh.run();
             }
         }));
@@ -848,7 +1079,7 @@ public class SwingApp extends JFrame {
     }
 
     private JPanel buildPerformancePanel() {
-        JPanel panel = makeModulePanel("📊  Performance Experiment Lab");
+        JPanel panel = makeModulePanel("Performance Experiment Lab");
         JTextArea out = makeOutputArea();
 
         JPanel controls = makeControlsCard("Experiment Controls");
@@ -864,7 +1095,7 @@ public class SwingApp extends JFrame {
         progress.setBackground(BG_CARD2);
         progress.setFont(FONT_SMALL);
 
-        JButton runAllBtn = makeAccentButton("▶▶  Run All Experiments (3× each)");
+        JButton runAllBtn = makeAccentButton("Run All Experiments (3x each)", IconType.RUN);
         runAllBtn.addActionListener(e -> {
             runAllBtn.setEnabled(false);
             progress.setString("Running...");
@@ -872,7 +1103,7 @@ public class SwingApp extends JFrame {
             PrintStream oldOut = System.out;
             System.setOut(new PrintStream(new TextAreaOutputStream(out)));
             runAsync(out, () -> {
-                appendLine(out, "[ Performance Experiment Lab — running all 6 experiments ]", ACCENT);
+                appendLine(out, "[ Performance Experiment Lab - running all 6 experiments ]", ACCENT);
                 appendLine(out, "Results saved to results/*.csv and algorithm_runs table.\n", TEXT_INFO);
                 String[] names = {"Search", "Sort", "Hash", "BST vs AVL", "Heap", "Graph"};
                 int total = names.length;
@@ -890,7 +1121,7 @@ public class SwingApp extends JFrame {
                     updateProgressBar(progress, 5, total, names[4]);
                     PerformanceLab.graphAlgorithms(store);
                     updateProgressBar(progress, 6, total, names[5]);
-                    appendLine(out, "\n✅  All experiments complete!", TEXT_SUCCESS);
+                    appendLine(out, "\n[OK] All experiments complete!", TEXT_SUCCESS);
                 } catch (Exception ex) {
                     appendLine(out, "Error: " + ex.getMessage(), TEXT_ERROR);
                 } finally {
@@ -916,7 +1147,7 @@ public class SwingApp extends JFrame {
     private void updateProgressBar(JProgressBar bar, int done, int total, String label) {
         SwingUtilities.invokeLater(() -> {
             bar.setValue((int)(done * 100.0 / total));
-            bar.setString(label + " ✓");
+            bar.setString(label + " [OK]");
         });
     }
 
@@ -996,7 +1227,7 @@ public class SwingApp extends JFrame {
         area.setLineWrap(true);
         area.setWrapStyleWord(true);
         area.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
-        area.setText("▌ Output console — results appear here.\n");
+        area.setText("> Output console - results appear here.\n");
         return area;
     }
 
@@ -1010,7 +1241,7 @@ public class SwingApp extends JFrame {
         return sp;
     }
 
-    private JButton makeAccentButton(String text) {
+    private JButton makeAccentButton(String text, IconType iconType) {
         JButton btn = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -1024,6 +1255,10 @@ public class SwingApp extends JFrame {
                 super.paintComponent(g);
             }
         };
+        if (iconType != null) {
+            btn.setIcon(new VectorIcon(iconType, 16, new Color(0x1A1B2E)));
+            btn.setIconTextGap(8);
+        }
         btn.setFont(FONT_NAV);
         btn.setForeground(new Color(0x1A1B2E));
         btn.setContentAreaFilled(false);
@@ -1035,7 +1270,7 @@ public class SwingApp extends JFrame {
         return btn;
     }
 
-    private JButton makeSecondaryButton(String text) {
+    private JButton makeSecondaryButton(String text, IconType iconType) {
         JButton btn = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -1048,6 +1283,10 @@ public class SwingApp extends JFrame {
                 super.paintComponent(g);
             }
         };
+        if (iconType != null) {
+            btn.setIcon(new VectorIcon(iconType, 16, TEXT_PRIMARY));
+            btn.setIconTextGap(8);
+        }
         btn.setFont(FONT_NAV);
         btn.setForeground(TEXT_PRIMARY);
         btn.setContentAreaFilled(false);
@@ -1144,7 +1383,7 @@ public class SwingApp extends JFrame {
             protected Void doInBackground() { task.run(); return null; }
             protected void done() {
                 try { get(); } catch (Exception e) {
-                    appendLine(out, "❌  Error: " + e.getCause().getMessage(), TEXT_ERROR);
+                    appendLine(out, "[ERROR] " + e.getCause().getMessage(), TEXT_ERROR);
                 }
             }
         }.execute();
