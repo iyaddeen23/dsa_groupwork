@@ -321,7 +321,7 @@ public class SwingApp extends JFrame {
     }
 
     private void buildFrame() {
-        setTitle("Ghana Smart Service Operations Optimizer — Campus Hub");
+        setTitle("University Campus Service Hub");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(1200, 750));
         setPreferredSize(new Dimension(1400, 850));
@@ -344,7 +344,7 @@ public class SwingApp extends JFrame {
         header.setBorder(new MatteBorder(0, 0, 2, 0, ACCENT));
         header.setPreferredSize(new Dimension(0, 64));
 
-        JLabel logo = new JLabel("  Ghana Smart Service Operations Optimizer");
+        JLabel logo = new JLabel("  University Campus Service Hub");
         logo.setIcon(new VectorIcon(IconType.GRADUATION_CAP, 24, ACCENT));
         logo.setIconTextGap(10);
         logo.setFont(FONT_TITLE);
@@ -538,7 +538,7 @@ public class SwingApp extends JFrame {
         JPanel info = createCard("About This System");
         info.setLayout(new BorderLayout());
         JTextArea desc = new JTextArea(
-            "Ghana Smart Service Operations Optimizer — University Campus Service Hub\n\n" +
+            "University Campus Service Hub\n\n" +
             "This system loads the University of Ghana, Legon campus data (locations, roads,\n" +
             "service requests, resources) into 13 custom-built data structures and runs search,\n" +
             "sort, graph, greedy and dynamic-programming algorithms over them:\n\n" +

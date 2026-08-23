@@ -1,4 +1,4 @@
-# Ghana Smart Service Operations Optimizer
+# University Campus Service Hub
 
 **DCIT 204/308 Joint DSA Semester Project — University Campus Service Hub**
 
@@ -40,7 +40,7 @@ java -jar target/campus-service-hub-jar-with-dependencies.jar
 ```
 
 On first run this automatically:
-1. Creates `campus_hub.db` (SQLite) from [`src/main/resources/schema.sql`](src/main/resources/schema.sql) (6 tables).
+1. Creates `campus_hub.db` (SQLite) from [`database/schema.sql`](database/schema.sql) (6 tables).
 2. Imports the seed dataset from [`data/`](data/) (50 locations, 110 roads, 30 resources, 300 service requests — see [`data/EVIDENCE_NOTE.md`](data/EVIDENCE_NOTE.md) for how it was generated).
 3. Loads everything from the database into the custom data structures.
 4. Opens the interactive console menu.

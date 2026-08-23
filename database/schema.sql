@@ -1,6 +1,7 @@
--- Ghana Smart Service Operations Optimizer
+-- University Campus Service Hub
 -- University Campus Service Hub — SQLite schema (6 tables)
--- Loaded by gh.edu.campushub.db.DatabaseInitializer
+-- Loaded at runtime by gh.edu.campushub.db.SchemaInitializer (from the classpath,
+-- where this file is placed by the Maven build — see pom.xml <resources>).
 
 PRAGMA foreign_keys = ON;
 

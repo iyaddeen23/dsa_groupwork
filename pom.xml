@@ -9,7 +9,7 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Ghana Smart Service Operations Optimizer</name>
+    <name>University Campus Service Hub</name>
     <description>DCIT 204/308 Joint DSA Semester Project — University Campus Service Hub</description>
 
     <properties>
@@ -39,6 +39,20 @@
 
     <build>
         <finalName>campus-service-hub</finalName>
+        <!-- database/schema.sql lives at the repo root (next to data/) so it's visibly
+             part of the submission package, but still gets copied onto the runtime
+             classpath so SchemaInitializer can load it as a classpath resource. -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>database</directory>
+                <includes>
+                    <include>schema.sql</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

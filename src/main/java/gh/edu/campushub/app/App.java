@@ -49,7 +49,7 @@ public class App {
     }
 
     public void run() {
-        System.out.println("\n=== Ghana Smart Service Operations Optimizer - University Campus Service Hub ===");
+        System.out.println("\n=== University Campus Service Hub ===");
         boolean running = true;
         while (running) {
             printMainMenu();

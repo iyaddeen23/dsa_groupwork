@@ -1,6 +1,6 @@
 # Correctness Evidence
 
-**DCIT 204/308 Joint DSA Semester Project — Ghana Smart Service Operations Optimizer**
+**DCIT 204/308 Joint DSA Semester Project — University Campus Service Hub**
 
 This document collects the PRD Section 8 correctness deliverables: 6 trace
 tables, 3 proof sketches, and the 2 required counterexamples. Every trace
