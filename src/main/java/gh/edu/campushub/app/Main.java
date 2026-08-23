@@ -11,7 +11,14 @@ import java.sql.Connection;
 public class Main {
 
     public static void main(String[] args) {
-        String dbPath = args.length > 0 ? args[0] : Database.DEFAULT_DB_PATH;
+        boolean useGui = true;
+        String dbPath = Database.DEFAULT_DB_PATH;
+
+        for (String arg : args) {
+            if (arg.equals("--console")) useGui = false;
+            else if (!arg.startsWith("--")) dbPath = arg;
+        }
+
         Connection connection = Database.getConnection(dbPath);
 
         boolean firstRun = !SchemaInitializer.tableExists(connection, "locations");
@@ -32,8 +39,14 @@ public class Main {
         System.out.println("Loaded " + store.locations().size() + " locations, " + store.roads().size()
                 + " roads, " + store.resources().size() + " resources, " + store.requests().size() + " requests.");
 
-        new App(store).run();
-
-        Database.close();
+        if (useGui) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                SwingApp app = new SwingApp(store);
+                app.setVisible(true);
+            });
+        } else {
+            new App(store).run();
+            Database.close();
+        }
     }
 }
